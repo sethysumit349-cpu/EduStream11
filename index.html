@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EduStream – CHSE Class 11 Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#080c18;--sf:#0f1623;--sf2:#19213a;
+  --bd:rgba(255,255,255,0.08);--t:#e8eaf2;--t2:#8892a8;--t3:#4a5568;
+  --r:14px;--rs:8px;--sh:0 6px 32px rgba(0,0,0,0.5);
+  --math:#6C63FF;--phys:#00C9A7;--chem:#FF6B6B;
+}
+html,body{height:100%;font-family:'Sora',sans-serif;background:var(--bg);color:var(--t);}
+body{background-image:radial-gradient(ellipse 100% 50% at 50% -10%,rgba(108,99,255,0.18),transparent);min-height:100vh;}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#1a2235;border:1px solid rgba(108,99,255,0.35);color:var(--t);
+  font-size:.84rem;font-weight:500;padding:.7rem 1.5rem;border-radius:50px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:9999;white-space:nowrap;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* ── Ticker ── */
+.ticker-bar{background:linear-gradient(90deg,rgba(108,99,255,.15),rgba(0,201,167,.1),rgba(108,99,255,.15));
+  border-bottom:1px solid rgba(108,99,255,.18);height:30px;overflow:hidden;display:flex;align-items:center;}
+.ticker-inner{display:inline-block;white-space:nowrap;font-size:.76rem;font-weight:500;color:#a8a3ff;
+  padding-left:100%;animation:tick 30s linear infinite;}
+@keyframes tick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+/* ── Nav ── */
+nav{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;
+  padding:0 1.5rem;height:56px;background:rgba(8,12,24,.93);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bd);}
+.logo{font-size:1.05rem;font-weight:800;letter-spacing:-.03em;}
+.nav-badge{font-size:.6rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  background:rgba(108,99,255,.15);color:#a8a3ff;padding:3px 10px;border-radius:100px;
+  border:1px solid rgba(108,99,255,.25);}
+.nav-left{display:flex;align-items:center;gap:.75rem;}
+.nav-right{display:flex;gap:.4rem;align-items:center;}
+.nav-tab{position:relative;background:none;border:none;cursor:pointer;color:var(--t2);
+  font-family:'Sora',sans-serif;font-size:.82rem;font-weight:500;padding:.38rem .9rem;
+  border-radius:8px;transition:all .2s;}
+.nav-tab:hover{background:var(--sf);color:var(--t);}
+.nav-tab.active{background:var(--sf2);color:var(--t);}
+.notif-dot{position:absolute;top:3px;right:3px;background:#FF6B6B;color:#fff;
+  font-size:.52rem;font-weight:800;min-width:15px;height:15px;border-radius:100px;
+  display:flex;align-items:center;justify-content:center;padding:0 3px;}
+
+/* ── Views ── */
+.view{display:none;}.view.active{display:block;}
+.sv,.ap,.lv-wrap,.al-wrap{max-width:860px;margin:0 auto;padding:1.5rem 1.25rem 5rem;}
+
+/* ── Hero ── */
+.hero{text-align:center;padding:2.5rem 1rem 2rem;}
+.hero-tag{display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:#6C63FF;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.22);
+  padding:4px 14px;border-radius:100px;margin-bottom:1rem;}
+.hero-title{font-size:clamp(2rem,6vw,3.2rem);font-weight:800;letter-spacing:-.04em;line-height:1.05;
+  margin-bottom:.75rem;background:linear-gradient(135deg,#fff 40%,#6a7895);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{color:var(--t2);font-size:.9rem;margin-bottom:1.75rem;}
+.search-wrap{display:flex;align-items:center;gap:.5rem;background:var(--sf);border:1px solid var(--bd);
+  border-radius:50px;padding:.5rem 1.2rem;max-width:420px;margin:0 auto;transition:border-color .2s;}
+.search-wrap:focus-within{border-color:rgba(108,99,255,.5);}
+#search-input{flex:1;background:none;border:none;outline:none;color:var(--t);
+  font-family:'Sora',sans-serif;font-size:.88rem;}
+#search-input::placeholder{color:var(--t3);}
+#search-clear{background:none;border:none;cursor:pointer;color:var(--t3);font-size:.8rem;display:none;}
+
+/* ── Subject Tabs ── */
+.subj-tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;}
+.stab{background:var(--sf);border:1px solid var(--bd);color:var(--t2);font-family:'Sora',sans-serif;
+  font-size:.82rem;font-weight:500;padding:.42rem 1rem;border-radius:8px;cursor:pointer;transition:all .2s;}
+.stab:hover{color:var(--t);border-color:rgba(255,255,255,.15);}
+.stab.active{background:rgba(108,99,255,.12);border-color:#6C63FF;color:#a8a3ff;}
+
+/* ── Subject Cards ── */
+.subj-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin-bottom:2rem;}
+.subj-card{position:relative;overflow:hidden;background:var(--sf);border:1px solid var(--bd);
+  border-radius:var(--r);padding:1.25rem 1.4rem;display:flex;align-items:center;gap:1rem;
+  cursor:pointer;transition:all .25s;animation:fu .4s ease both;}
+.subj-card:hover{background:var(--sf2);transform:translateY(-2px);}
+.sc-icon{font-size:2rem;position:relative;z-index:1;}
+.sc-info{flex:1;}
+.sc-name{font-weight:700;font-size:1rem;}
+.sc-cnt{font-size:.72rem;color:var(--t2);margin-top:3px;}
+.sc-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+.sc-arr{color:var(--t3);font-size:1.1rem;transition:transform .2s;}
+.subj-card:hover .sc-arr{transform:translateX(4px);}
+.nbadge{font-size:.57rem;font-weight:800;background:rgba(255,107,107,.15);color:#ff9e9e;
+  border:1px solid rgba(255,107,107,.3);padding:2px 8px;border-radius:100px;}
+
+/* ── Recently Added ── */
+.recent-sec{margin-bottom:2rem;}
+.recent-lbl{font-size:.78rem;font-weight:700;color:var(--t2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:.7rem;}
+.recent-strip{display:flex;gap:.7rem;overflow-x:auto;padding-bottom:.5rem;}
+.recent-strip::-webkit-scrollbar{height:3px;}
+.recent-strip::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px;}
+.rc{position:relative;flex-shrink:0;width:155px;background:var(--sf);border:1px solid var(--bd);
+  border-radius:12px;padding:1rem;cursor:pointer;transition:all .2s;}
+.rc:hover{background:var(--sf2);transform:translateY(-2px);}
+.rc-icon{font-size:1.4rem;margin-bottom:.4rem;}
+.rc-subj{font-size:.67rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px;}
+.rc-title{font-size:.77rem;font-weight:600;color:var(--t);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.rc-new{position:absolute;top:8px;right:8px;font-size:.53rem;font-weight:800;background:#FF6B6B;color:#fff;padding:2px 6px;border-radius:100px;}
+
+/* ── Chapter List ── */
+.ch-section{animation:fu .3s ease;}
+.sec-hdr{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;}
+.sec-title{font-size:1.2rem;font-weight:700;letter-spacing:-.02em;}
+.sec-sub{font-size:.75rem;color:var(--t2);margin-top:2px;}
+.ch-list{display:flex;flex-direction:column;gap:.7rem;}
+.chcard{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
+  padding:1.1rem 1.3rem;display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;transition:all .2s;animation:fu .35s ease both;}
+.chcard:hover{background:var(--sf2);transform:translateX(3px);}
+.chcard-l{display:flex;align-items:flex-start;gap:1rem;flex:1;}
+.chnum{min-width:32px;height:32px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0;}
+.chsubj{font-size:.69rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px;}
+.chtitle{font-size:.92rem;font-weight:600;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+.chdesc{font-size:.76rem;color:var(--t2);margin-top:4px;}
+.inline-new{font-size:.58rem;font-weight:800;background:#FF6B6B;color:#fff;padding:2px 7px;border-radius:100px;}
+.chplay{display:flex;flex-direction:column;align-items:center;gap:4px;margin-left:1rem;}
+.playbtn{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:.9rem;padding-left:2px;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .2s;}
+.chcard:hover .playbtn{transform:scale(1.12);}
+.chlbl{font-size:.62rem;color:var(--t3);font-weight:500;}
+.hint{text-align:center;color:var(--t3);font-size:.84rem;margin-top:1rem;}
+.empty{text-align:center;color:var(--t3);padding:3rem;font-size:.88rem;}
+
+/* ── Lecture View ── */
+.lv-wrap{max-width:900px;}
+.back-btn{background:var(--sf);border:1px solid var(--bd);color:var(--t2);font-family:'Sora',sans-serif;
+  font-size:.82rem;padding:.42rem 1rem;border-radius:8px;cursor:pointer;margin-bottom:1.5rem;
+  transition:all .2s;}
+.back-btn:hover{color:var(--t);border-color:rgba(255,255,255,.18);}
+.lv-hdr{margin-bottom:1.5rem;}
+.lv-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-bottom:.75rem;}
+.lv-title{font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;letter-spacing:-.03em;margin-bottom:.5rem;}
+.lv-desc{color:var(--t2);font-size:.9rem;}
+
+/* ── VIDEO PLAYER — works when hosted ── */
+.vid-wrap{position:relative;padding-bottom:56.25%;height:0;border-radius:var(--r);overflow:hidden;
+  border:1px solid var(--bd);box-shadow:var(--sh);background:#000;}
+.vid-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
+
+/* Fallback thumbnail card shown inside Claude preview */
+.vid-fallback{display:none;border-radius:var(--r);overflow:hidden;background:#000;
+  border:1px solid var(--bd);box-shadow:var(--sh);cursor:pointer;position:relative;min-height:200px;}
+.vid-fallback img{width:100%;display:block;opacity:.7;max-height:320px;object-fit:cover;}
+.vid-fallback-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:.75rem;background:rgba(0,0,0,.4);padding:2rem;}
+.vf-ring{width:72px;height:72px;border-radius:50%;background:rgba(255,0,0,.9);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 6px rgba(255,0,0,.25),0 8px 32px rgba(255,0,0,.4);transition:transform .2s;}
+.vid-fallback:hover .vf-ring{transform:scale(1.1);}
+.vf-play{color:#fff;font-size:1.6rem;padding-left:4px;}
+.vf-label{color:#fff;font-size:1rem;font-weight:700;text-align:center;}
+.vf-sub{color:rgba(255,255,255,.6);font-size:.75rem;text-align:center;}
+
+.lv-actions{display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap;}
+.lv-btn-red{display:inline-flex;align-items:center;gap:.55rem;background:#FF0000;color:#fff;
+  font-family:'Sora',sans-serif;font-size:.88rem;font-weight:700;
+  padding:.65rem 1.4rem;border-radius:10px;text-decoration:none;transition:all .2s;
+  box-shadow:0 4px 16px rgba(255,0,0,.3);}
+.lv-btn-red:hover{background:#cc0000;transform:translateY(-1px);}
+.lv-btn-dark{display:inline-flex;align-items:center;gap:.5rem;background:var(--sf2);color:var(--t2);
+  font-family:'Sora',sans-serif;font-size:.88rem;font-weight:500;
+  padding:.65rem 1.4rem;border-radius:10px;text-decoration:none;transition:all .2s;border:1px solid var(--bd);}
+.lv-btn-dark:hover{color:var(--t);}
+.lv-note{margin-top:1rem;font-size:.78rem;color:var(--t2);background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:.7rem 1rem;}
+.hosted-note{margin-top:.7rem;font-size:.75rem;color:#a8a3ff;background:rgba(108,99,255,.07);
+  border:1px solid rgba(108,99,255,.18);border-radius:10px;padding:.65rem 1rem;line-height:1.5;}
+
+/* ── Admin Login ── */
+.al-wrap{display:flex;justify-content:center;align-items:center;min-height:calc(100vh - 86px);}
+.al-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
+  padding:2.5rem 2rem;width:100%;max-width:350px;text-align:center;animation:fu .4s ease;}
+.al-icon{font-size:2.5rem;margin-bottom:1rem;}
+.al-title{font-size:1.35rem;font-weight:800;margin-bottom:.4rem;}
+.al-sub{font-size:.77rem;color:var(--t3);margin-bottom:1.5rem;}
+.fld{text-align:left;margin-bottom:.85rem;}
+.fld label{display:block;font-size:.74rem;font-weight:600;color:var(--t2);margin-bottom:.3rem;letter-spacing:.02em;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-6px);}40%,80%{transform:translateX(6px);}}
+.shake{animation:shake .4s ease;}
+
+/* ── Admin Panel ── */
+.ap-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.4rem;}
+.ap-title{font-size:1.2rem;font-weight:800;letter-spacing:-.02em;}
+.ap-sub{font-size:.78rem;color:var(--t2);margin-top:3px;}
+.ap-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.7rem;margin-bottom:1.4rem;}
+.stat{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:.9rem;text-align:center;transition:all .2s;}
+.stat:hover{background:var(--sf2);}
+.stat-ic{font-size:1.4rem;margin-bottom:.3rem;}
+.stat-n{font-size:1.5rem;font-weight:800;}
+.stat-l{font-size:.68rem;color:var(--t2);font-weight:600;margin-top:2px;}
+.ap-tabs{display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap;}
+.aptab{background:var(--sf);border:1px solid var(--bd);color:var(--t2);font-family:'Sora',sans-serif;
+  font-size:.82rem;font-weight:500;padding:.48rem 1.1rem;border-radius:9px;cursor:pointer;transition:all .2s;}
+.aptab:hover{color:var(--t);}
+.aptab.on{background:rgba(108,99,255,.14);border-color:#6C63FF;color:#a8a3ff;}
+.admin-tab-content{display:none;}.admin-tab-content.on{display:block;}
+.acard{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:1.5rem;margin-bottom:1.5rem;animation:fu .3s ease;}
+.acard-title{font-size:.93rem;font-weight:700;margin-bottom:1.2rem;}
+.acard-hdr{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.75rem;margin-bottom:1.2rem;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;}
+.fg{display:flex;flex-direction:column;gap:.35rem;}
+.fg.full{grid-column:1/-1;}
+.fg label{font-size:.73rem;font-weight:600;color:var(--t2);letter-spacing:.02em;}
+.ftabs{display:flex;flex-wrap:wrap;gap:.4rem;}
+.ftab{background:none;border:1px solid var(--bd);color:var(--t2);font-family:'Sora',sans-serif;
+  font-size:.72rem;font-weight:500;padding:4px 12px;border-radius:100px;cursor:pointer;transition:all .2s;}
+.ftab:hover{color:var(--t);}
+.ftab.on{background:rgba(108,99,255,.14);border-color:rgba(108,99,255,.4);color:#a8a3ff;}
+.ach-list{display:flex;flex-direction:column;gap:.6rem;max-height:520px;overflow-y:auto;padding-right:4px;}
+.ach-list::-webkit-scrollbar{width:4px;}
+.ach-list::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px;}
+.ach-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);
+  border:1px solid var(--bd);border-radius:10px;padding:.82rem 1rem;gap:1rem;}
+.ach-l{display:flex;align-items:flex-start;gap:.75rem;flex:1;min-width:0;}
+.ach-subj{font-size:.67rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+.ach-title{font-size:.85rem;font-weight:600;}
+.ach-pid{font-size:.69rem;color:var(--t3);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ach-pid code{font-family:'JetBrains Mono',monospace;}
+.ach-acts{display:flex;gap:.5rem;flex-shrink:0;}
+.edit-row{background:var(--bg);border:1px solid rgba(108,99,255,.3);border-radius:10px;padding:1rem;margin-bottom:.6rem;}
+.edit-acts{display:flex;gap:.5rem;margin-top:.75rem;}
+.ann-preview{background:var(--bg);border:1px solid rgba(108,99,255,.2);border-radius:8px;padding:.6rem 1rem;font-size:.78rem;color:#a8a3ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ── Inputs & Buttons ── */
+input,select,textarea{background:var(--bg);border:1px solid var(--bd);color:var(--t);font-family:'Sora',sans-serif;
+  font-size:.87rem;padding:.56rem .9rem;border-radius:var(--rs);outline:none;width:100%;transition:border-color .2s;}
+input:focus,select:focus,textarea:focus{border-color:rgba(108,99,255,.5);}
+input::placeholder,textarea::placeholder{color:var(--t3);}
+textarea{resize:vertical;min-height:60px;}
+select{cursor:pointer;}
+.btn-pri{background:#6C63FF;color:#fff;border:none;font-family:'Sora',sans-serif;font-size:.86rem;
+  font-weight:600;padding:.62rem 1.5rem;border-radius:10px;cursor:pointer;margin-top:.9rem;transition:all .2s;}
+.btn-pri:hover{background:#7b74ff;transform:translateY(-1px);box-shadow:0 6px 22px rgba(108,99,255,.4);}
+.btn-pri.full{width:100%;margin-top:1.25rem;}
+.btn-logout{background:var(--sf2);border:1px solid var(--bd);color:var(--t2);font-family:'Sora',sans-serif;font-size:.8rem;padding:.42rem 1rem;border-radius:8px;cursor:pointer;transition:all .2s;}
+.btn-logout:hover{color:var(--t);}
+.btn-edit{background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.22);color:#a8a3ff;font-family:'Sora',sans-serif;font-size:.75rem;padding:.36rem .8rem;border-radius:7px;cursor:pointer;transition:all .2s;}
+.btn-edit:hover{background:rgba(108,99,255,.2);}
+.btn-del{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.22);color:#ff6b6b;font-family:'Sora',sans-serif;font-size:.75rem;padding:.36rem .7rem;border-radius:7px;cursor:pointer;transition:all .2s;}
+.btn-del:hover{background:rgba(255,107,107,.2);}
+.btn-save{background:#00C9A7;color:#fff;border:none;font-family:'Sora',sans-serif;font-size:.82rem;font-weight:600;padding:.42rem 1.1rem;border-radius:8px;cursor:pointer;transition:all .2s;}
+.btn-cancel{background:var(--sf2);border:1px solid var(--bd);color:var(--t2);font-family:'Sora',sans-serif;font-size:.82rem;padding:.42rem 1rem;border-radius:8px;cursor:pointer;transition:all .2s;}
+.err-msg{font-size:.78rem;color:#ff6b6b;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);padding:8px 12px;border-radius:8px;margin-top:.5rem;}
+.ok-msg{font-size:.78rem;color:#00C9A7;background:rgba(0,201,167,.08);border:1px solid rgba(0,201,167,.2);padding:8px 12px;border-radius:8px;margin-top:.5rem;}
+
+@keyframes fu{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+@media(max-width:600px){
+  .fgrid{grid-template-columns:1fr;}.fg.full{grid-column:auto;}
+  .subj-cards{grid-template-columns:1fr;}
+  .nav-badge{display:none;}
+  .chdesc{display:none;}
+  .ach-acts{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-left">
+    <span class="logo">📚 EduStream</span>
+    <span class="nav-badge">CHSE · Class 11 · Science</span>
+  </div>
+  <div class="nav-right">
+    <button class="nav-tab active" onclick="showView('student')" id="tab-student">
+      🎓 Student <span class="notif-dot" id="notif-dot" style="display:none"></span>
+    </button>
+    <button class="nav-tab" onclick="showView('admin-gate')" id="tab-admin">⚙️ Admin</button>
+  </div>
+</nav>
+
+<!-- Announcement Ticker -->
+<div class="ticker-bar" id="ticker-bar" style="display:none">
+  <span class="ticker-inner" id="ticker-text"></span>
+</div>
+
+<!-- ══ STUDENT VIEW ══ -->
+<div class="view active sv" id="view-student">
+  <div class="hero">
+    <div class="hero-tag">CHSE Odisha · Class 11 · Science Stream</div>
+    <h1 class="hero-title">Your Smart<br>Learning Hub</h1>
+    <p class="hero-sub">Watch curated lecture playlists for every chapter — anytime, anywhere.</p>
+    <div class="search-wrap">
+      <span>🔍</span>
+      <input id="search-input" placeholder="Search chapters, topics..." oninput="handleSearch(this.value)"/>
+      <button id="search-clear" onclick="clearSearch()">✕</button>
+    </div>
+  </div>
+
+  <!-- Subject tabs -->
+  <div class="subj-tabs" id="subj-tabs">
+    <button class="stab active" onclick="filterSubject(null,this)">All</button>
+    <button class="stab" style="border-left:3px solid var(--math)" onclick="filterSubject('Mathematics',this)">∑ Mathematics</button>
+    <button class="stab" style="border-left:3px solid var(--phys)" onclick="filterSubject('Physics',this)">⚛ Physics</button>
+    <button class="stab" style="border-left:3px solid var(--chem)" onclick="filterSubject('Chemistry',this)">⚗ Chemistry</button>
+  </div>
+
+  <!-- Subject cards -->
+  <div class="subj-cards" id="subj-cards"></div>
+
+  <!-- Recently added -->
+  <div id="recent-sec" class="recent-sec" style="display:none">
+    <div class="recent-lbl">🔥 Recently Added</div>
+    <div class="recent-strip" id="recent-strip"></div>
+  </div>
+
+  <!-- Chapter list -->
+  <div class="ch-section" id="ch-section" style="display:none">
+    <div class="sec-hdr" id="sec-hdr"></div>
+    <div class="ch-list" id="ch-list"></div>
+    <div class="empty" id="ch-empty" style="display:none">📭 No chapters found.</div>
+  </div>
+
+  <div class="hint" id="home-hint">👆 Tap a subject to explore chapters</div>
+</div>
+
+<!-- ══ LECTURE VIEW ══ -->
+<div class="view lv-wrap" id="view-lecture">
+  <button class="back-btn" onclick="backToChapters()">← Back</button>
+  <div class="lv-hdr">
+    <div class="lv-badge" id="lv-badge"></div>
+    <h2 class="lv-title" id="lv-title"></h2>
+    <p class="lv-desc" id="lv-desc"></p>
+  </div>
+
+  <!-- Actual iframe player — works when file is hosted/opened directly -->
+  <div class="vid-wrap" id="vid-wrap">
+    <iframe id="yt-frame" allowfullscreen
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  </div>
+
+  <!-- Fallback card (shown only inside Claude sandbox) -->
+  <a class="vid-fallback" id="vid-fallback" target="_blank" rel="noopener noreferrer">
+    <img id="vf-thumb" src="" alt=""/>
+    <div class="vid-fallback-overlay">
+      <div class="vf-ring"><div class="vf-play">▶</div></div>
+      <div class="vf-label">▶ Watch on YouTube</div>
+      <div class="vf-sub">Tap to open in YouTube</div>
+    </div>
+  </a>
+
+  <div class="lv-actions">
+    <a class="lv-btn-red" id="lv-yt-btn" href="#" target="_blank" rel="noopener noreferrer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+      Watch on YouTube
+    </a>
+    <a class="lv-btn-dark" id="lv-pl-btn" href="#" target="_blank" rel="noopener noreferrer" style="display:none">📋 Full Playlist</a>
+  </div>
+
+  <div class="lv-note">📌 Videos play directly in this app when opened from a browser or hosted on GitHub Pages / Netlify.</div>
+  <div class="hosted-note" id="sandbox-note" style="display:none">
+    ⚠️ <strong>You're viewing this inside the Claude preview.</strong> Deploy this HTML file to <strong>GitHub Pages or Netlify</strong> — videos will play directly inside the app. Click "Watch on YouTube" above for now.
+  </div>
+</div>
+
+<!-- ══ ADMIN LOGIN ══ -->
+<div class="view al-wrap" id="view-admin-gate">
+  <div class="al-card" id="al-card">
+    <div class="al-icon">🔐</div>
+    <h2 class="al-title">Admin Login</h2>
+    <p class="al-sub">Only authorized admin can access this panel</p>
+    <div class="fld"><label>Username</label><input id="al-user" placeholder="Enter username" onkeydown="if(event.key==='Enter')tryLogin()"/></div>
+    <div class="fld"><label>Password</label><input id="al-pwd" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')tryLogin()"/></div>
+    <div class="err-msg" id="al-err" style="display:none"></div>
+    <button class="btn-pri full" onclick="tryLogin()">Login →</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ══ -->
+<div class="view ap" id="view-admin">
+  <div class="ap-top">
+    <div><div class="ap-title">⚙️ Admin Panel</div><div class="ap-sub">Welcome back, Sumit 👋</div></div>
+    <button class="btn-logout" onclick="adminLogout()">Logout</button>
+  </div>
+  <div class="ap-stats" id="ap-stats"></div>
+  <div class="ap-tabs">
+    <button class="aptab on" onclick="adminTab('add',this)">➕ Add Chapter</button>
+    <button class="aptab" onclick="adminTab('manage',this)" id="manage-tab-btn">📋 Manage</button>
+    <button class="aptab" onclick="adminTab('ann',this)">📢 Announcement</button>
+  </div>
+
+  <!-- Add Tab -->
+  <div class="admin-tab-content on" id="atab-add">
+    <div class="acard">
+      <div class="acard-title">➕ Add New Chapter / Playlist</div>
+      <div class="fgrid">
+        <div class="fg"><label>Subject *</label>
+          <select id="f-subj"><option>Mathematics</option><option>Physics</option><option>Chemistry</option></select></div>
+        <div class="fg"><label>Chapter Name *</label><input id="f-chap" placeholder="e.g. Chapter 1 – Sets"/></div>
+        <div class="fg full"><label>YouTube Video or Playlist URL *</label>
+          <input id="f-url" placeholder="https://youtu.be/VIDEO_ID  or  playlist?list=PLxxxx"/></div>
+        <div class="fg full"><label>Description (optional)</label>
+          <textarea id="f-desc" placeholder="Topics covered in this chapter..."></textarea></div>
+      </div>
+      <div class="err-msg" id="add-err" style="display:none"></div>
+      <div class="ok-msg" id="add-ok" style="display:none"></div>
+      <button class="btn-pri" onclick="addChapter()">Publish Chapter →</button>
+    </div>
+  </div>
+
+  <!-- Manage Tab -->
+  <div class="admin-tab-content" id="atab-manage">
+    <div class="acard">
+      <div class="acard-hdr">
+        <div class="acard-title">📋 All Chapters</div>
+        <div class="ftabs">
+          <button class="ftab on" onclick="manageFilter('All',this)">All</button>
+          <button class="ftab" onclick="manageFilter('Mathematics',this)">Mathematics</button>
+          <button class="ftab" onclick="manageFilter('Physics',this)">Physics</button>
+          <button class="ftab" onclick="manageFilter('Chemistry',this)">Chemistry</button>
+        </div>
+      </div>
+      <div class="ach-list" id="ach-list"></div>
+    </div>
+  </div>
+
+  <!-- Announce Tab -->
+  <div class="admin-tab-content" id="atab-ann">
+    <div class="acard">
+      <div class="acard-title">📢 Scrolling Announcement Banner</div>
+      <p style="font-size:.82rem;color:var(--t2);margin-bottom:1rem">This scrolling message appears at the top for all students. Use it for new chapter alerts, exam tips, etc.</p>
+      <div class="fg full"><label>Announcement Text</label>
+        <textarea id="ann-text" rows="3" placeholder="e.g. 📢 Chemistry Chapter 2 just added!"></textarea></div>
+      <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn-pri" style="margin-top:0" onclick="saveAnn()">Publish →</button>
+        <button class="btn-cancel" onclick="clearAnn()">Clear Banner</button>
+      </div>
+      <div style="margin-top:1rem">
+        <div style="font-size:.72rem;color:var(--t3);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.06em">Live Preview:</div>
+        <div class="ann-preview" id="ann-preview"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────
+const ADMIN_USER = "Sumit";
+const ADMIN_PASS = "Sketcha@2025";
+const SUBJECTS   = ["Mathematics","Physics","Chemistry"];
+const META = {
+  Mathematics:{icon:"∑",color:"#6C63FF",bg:"rgba(108,99,255,0.13)"},
+  Physics:    {icon:"⚛",color:"#00C9A7",bg:"rgba(0,201,167,0.13)"},
+  Chemistry:  {icon:"⚗",color:"#FF6B6B",bg:"rgba(255,107,107,0.13)"},
+};
+const defaultChapters = [
+  {id:"1",subject:"Mathematics",chapter:"Chapter 1 – Sets",description:"Introduction to sets, types of sets, and Venn diagrams.",playlistId:"PLu0W_9lII9agICnT8t4iYVSZ3eykIAOME",addedAt:Date.now()-86400000*5},
+  {id:"2",subject:"Mathematics",chapter:"Chapter 2 – Relations & Functions",description:"Ordered pairs, cartesian product, relations and functions.",playlistId:"PLu0W_9lII9agICnT8t4iYVSZ3eykIAOME",addedAt:Date.now()-86400000*3},
+  {id:"3",subject:"Physics",chapter:"Chapter 1 – Physical World",description:"Scope of physics, fundamental forces, and conservation laws.",playlistId:"PLu0W_9lII9ahR3O2qMSvMHzfMzQn30bxk",addedAt:Date.now()-86400000*2},
+  {id:"4",subject:"Chemistry",chapter:"Chapter 1 – Some Basic Concepts",description:"Laws of chemical combinations, Avogadro's law, mole concept.",playlistId:"PLu0W_9lII9ahVnO0bJNiaNFfDI-DJOsed",addedAt:Date.now()-86400000},
+];
+
+// ── State ────────────────────────────────────────────────────────────────────
+let chapters    = JSON.parse(localStorage.getItem("es_chapters")||"null") || defaultChapters;
+let announce    = localStorage.getItem("es_announce") || "📢 Welcome to EduStream CHSE! New lectures added regularly. Study hard! 🚀";
+let seenIds     = JSON.parse(localStorage.getItem("es_seen")||"[]");
+let selSubject  = null;
+let currentView = "student";
+let manFilterVal= "All";
+let editingId   = null;
+
+const isNew = ts => Date.now()-ts < 86400000*3;
+const uid   = () => Math.random().toString(36).slice(2,10);
+
+function persist(){
+  localStorage.setItem("es_chapters", JSON.stringify(chapters));
+  localStorage.setItem("es_seen",     JSON.stringify(seenIds));
+}
+function persistAnn(){ localStorage.setItem("es_announce", announce); }
+
+// ── URL parsers ──────────────────────────────────────────────────────────────
+function getVideoId(s){
+  const m = s.match(/(?:youtu\.be\/|[?&]v=)([A-Za-z0-9_-]{11})/);
+  if(m) return m[1];
+  if(/^[A-Za-z0-9_-]{11}$/.test(s.trim())) return s.trim();
+  return null;
+}
+function getPlaylistId(s){
+  const m = s.match(/[?&]list=([^&\s]+)/);
+  if(m) return m[1];
+  if(/^PL[A-Za-z0-9_-]{10,}/.test(s.trim())) return s.trim();
+  return null;
+}
+function extractPL(s){
+  const pl = getPlaylistId(s); if(pl) return pl;
+  const vid = getVideoId(s);   if(vid) return vid;
+  return s.trim();
+}
+
+// ── Toast ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 3500);
+}
+
+// ── Views ────────────────────────────────────────────────────────────────────
+function showView(name){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
+  const map = {student:"student",lecture:"student","admin-gate":"admin","admin":"admin"};
+  document.getElementById("view-"+name)?.classList.add("active");
+  document.getElementById("tab-"+( map[name]||name ))?.classList.add("active");
+  currentView = name;
+  if(name==="student"){ selSubject=null; renderStudentHome(); }
+  if(name==="admin")  { renderAdminPanel(); }
+}
+
+// ── Ticker ───────────────────────────────────────────────────────────────────
+function renderTicker(){
+  const bar = document.getElementById("ticker-bar");
+  if(announce){
+    document.getElementById("ticker-text").textContent = announce + "      " + announce;
+    bar.style.display="flex";
+  } else { bar.style.display="none"; }
+}
+
+// ── Student Home ─────────────────────────────────────────────────────────────
+function renderStudentHome(){
+  updateNotifDot();
+  renderSubjectCards();
+  renderRecentStrip();
+  document.getElementById("ch-section").style.display="none";
+  document.getElementById("home-hint").style.display="block";
+  document.getElementById("subj-tabs").style.display="flex";
+  document.getElementById("search-input").value="";
+  document.getElementById("search-clear").style.display="none";
+}
+
+function updateNotifDot(){
+  const unseen = chapters.filter(c=>isNew(c.addedAt)&&!seenIds.includes(c.id)).length;
+  const dot = document.getElementById("notif-dot");
+  if(unseen>0){ dot.textContent=unseen; dot.style.display="flex"; }
+  else dot.style.display="none";
+}
+
+function renderSubjectCards(){
+  const container = document.getElementById("subj-cards");
+  container.innerHTML = "";
+  SUBJECTS.forEach(s=>{
+    const m = META[s];
+    const cnt = chapters.filter(c=>c.subject===s).length;
+    const newCnt = chapters.filter(c=>c.subject===s&&isNew(c.addedAt)&&!seenIds.includes(c.id)).length;
+    const card = document.createElement("div");
+    card.className = "subj-card";
+    card.style.cssText = `border-left:3px solid ${m.color}`;
+    card.innerHTML = `
+      <div class="sc-icon">${m.icon}</div>
+      <div class="sc-info">
+        <div class="sc-name">${s}</div>
+        <div class="sc-cnt">${cnt} chapter${cnt!==1?"s":""}</div>
+      </div>
+      <div class="sc-right">
+        ${newCnt>0?`<span class="nbadge">${newCnt} NEW</span>`:""}
+        <span class="sc-arr" style="color:${m.color}">→</span>
+      </div>`;
+    card.onclick = ()=>filterSubject(s, null);
+    container.appendChild(card);
+  });
+}
+
+function renderRecentStrip(){
+  const recent = chapters.filter(c=>isNew(c.addedAt));
+  const sec = document.getElementById("recent-sec");
+  if(recent.length===0){ sec.style.display="none"; return; }
+  sec.style.display="block";
+  const strip = document.getElementById("recent-strip");
+  strip.innerHTML="";
+  recent.slice(0,6).forEach(ch=>{
+    const m = META[ch.subject];
+    const div = document.createElement("div");
+    div.className="rc";
+    div.style.cssText=`border-top:2px solid ${m.color}`;
+    div.innerHTML=`
+      <div class="rc-icon">${m.icon}</div>
+      <div class="rc-subj" style="color:${m.color}">${ch.subject}</div>
+      <div class="rc-title">${ch.chapter}</div>
+      ${!seenIds.includes(ch.id)?'<div class="rc-new">NEW</div>':""}`;
+    div.onclick=()=>openChapter(ch);
+    strip.appendChild(div);
+  });
+}
+
+// ── Filter / Search ──────────────────────────────────────────────────────────
+function filterSubject(subj, tabEl){
+  selSubject = subj;
+  document.querySelectorAll(".stab").forEach(t=>t.classList.remove("active"));
+  if(tabEl) tabEl.classList.add("active");
+  else {
+    document.querySelectorAll(".stab").forEach(t=>{
+      if(t.textContent.includes(subj||"All")) t.classList.add("active");
+    });
+  }
+  if(!subj){ renderStudentHome(); return; }
+  document.getElementById("subj-cards").innerHTML="";
+  document.getElementById("recent-sec").style.display="none";
+  document.getElementById("home-hint").style.display="none";
+  renderChapterList(chapters.filter(c=>c.subject===subj), subj, null);
+}
+
+function handleSearch(val){
+  document.getElementById("search-clear").style.display = val?"inline":"none";
+  if(!val){ selSubject=null; renderStudentHome(); return; }
+  document.getElementById("subj-cards").innerHTML="";
+  document.getElementById("recent-sec").style.display="none";
+  document.getElementById("home-hint").style.display="none";
+  document.getElementById("subj-tabs").style.display="none";
+  const results = chapters.filter(c=>
+    c.chapter.toLowerCase().includes(val.toLowerCase())||
+    (c.description||"").toLowerCase().includes(val.toLowerCase())
+  );
+  renderChapterList(results, null, val);
+}
+
+function clearSearch(){
+  document.getElementById("search-input").value="";
+  document.getElementById("search-clear").style.display="none";
+  document.getElementById("subj-tabs").style.display="flex";
+  selSubject=null; renderStudentHome();
+}
+
+function renderChapterList(list, subj, searchVal){
+  const sec = document.getElementById("ch-section");
+  sec.style.display="block";
+  const hdr = document.getElementById("sec-hdr");
+  if(subj){
+    const m=META[subj];
+    hdr.innerHTML=`<span style="color:${m.color};font-size:1.8rem">${m.icon}</span>
+      <div><div class="sec-title">${subj}</div>
+      <div class="sec-sub">${list.length} chapter${list.length!==1?"s":""}</div></div>`;
+  } else if(searchVal){
+    hdr.innerHTML=`<div class="sec-title">Results for "${searchVal}"</div>`;
+  } else { hdr.innerHTML=""; }
+
+  const chList = document.getElementById("ch-list");
+  const empty  = document.getElementById("ch-empty");
+  chList.innerHTML="";
+  if(list.length===0){ empty.style.display="block"; return; }
+  empty.style.display="none";
+  list.forEach((ch,i)=>{
+    const m=META[ch.subject];
+    const unseen=isNew(ch.addedAt)&&!seenIds.includes(ch.id);
+    const card=document.createElement("div");
+    card.className="chcard";
+    card.style.cssText=`border-left:3px solid ${m.color};animation-delay:${i*0.04}s`;
+    card.innerHTML=`
+      <div class="chcard-l">
+        <div class="chnum" style="background:${m.bg};color:${m.color}">${i+1}</div>
+        <div>
+          <div class="chsubj" style="color:${m.color}">${m.icon} ${ch.subject}</div>
+          <div class="chtitle">${ch.chapter}${unseen?'<span class="inline-new">NEW</span>':""}</div>
+          ${ch.description?`<div class="chdesc">${ch.description}</div>`:""}
+        </div>
+      </div>
+      <div class="chplay">
+        <div class="playbtn" style="background:${m.color}">▶</div>
+        <div class="chlbl">Watch</div>
+      </div>`;
+    card.onclick=()=>openChapter(ch);
+    chList.appendChild(card);
+  });
+}
+
+// ── Open Chapter / Play Video ─────────────────────────────────────────────────
+function openChapter(ch){
+  // Mark as seen
+  if(!seenIds.includes(ch.id)){ seenIds.push(ch.id); persist(); }
+
+  const m = META[ch.subject];
+  document.getElementById("lv-badge").textContent = m.icon+" "+ch.subject;
+  document.getElementById("lv-badge").style.cssText=`background:${m.bg};color:${m.color}`;
+  document.getElementById("lv-title").textContent = ch.chapter;
+  const descEl = document.getElementById("lv-desc");
+  descEl.textContent = ch.description||"";
+  descEl.style.display = ch.description?"block":"none";
+
+  const videoId    = getVideoId(ch.playlistId);
+  const playlistId = getPlaylistId(ch.playlistId);
+
+  // Build embed URL
+  let embedSrc = "";
+  if(videoId && playlistId){
+    embedSrc = `https://www.youtube.com/embed/${videoId}?list=${playlistId}&rel=0&modestbranding=1&autoplay=1`;
+  } else if(videoId){
+    embedSrc = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1`;
+  } else if(playlistId){
+    embedSrc = `https://www.youtube.com/embed/videoseries?list=${playlistId}&rel=0&modestbranding=1&autoplay=1`;
+  }
+
+  // Watch URL for buttons
+  const watchUrl = videoId
+    ? `https://www.youtube.com/watch?v=${videoId}${playlistId?"&list="+playlistId:""}`
+    : playlistId
+      ? `https://www.youtube.com/playlist?list=${playlistId}`
+      : `https://www.youtube.com/results?search_query=${encodeURIComponent(ch.chapter)}`;
+
+  // Set iframe src
+  const frame = document.getElementById("yt-frame");
+  frame.src = embedSrc;
+
+  // Set fallback card
+  const fallback = document.getElementById("vid-fallback");
+  fallback.href = watchUrl;
+  if(videoId){
+    document.getElementById("vf-thumb").src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    document.getElementById("vf-thumb").style.display="block";
+  } else {
+    document.getElementById("vf-thumb").style.display="none";
+  }
+
+  // Buttons
+  document.getElementById("lv-yt-btn").href = watchUrl;
+  document.getElementById("lv-yt-btn").textContent = videoId ? "▶ Watch on YouTube" : "▶ Open Playlist";
+  const plBtn = document.getElementById("lv-pl-btn");
+  if(playlistId && videoId){ plBtn.href=`https://www.youtube.com/playlist?list=${playlistId}`; plBtn.style.display="inline-flex"; }
+  else plBtn.style.display="none";
+
+  // Detect sandbox (Claude artifact iframe) → show fallback instead of iframe
+  const inSandbox = (window.self !== window.top) && !window.location.protocol.startsWith("file");
+  if(inSandbox){
+    document.getElementById("vid-wrap").style.display="none";
+    fallback.style.display="block";
+    document.getElementById("sandbox-note").style.display="block";
+  } else {
+    document.getElementById("vid-wrap").style.display="block";
+    fallback.style.display="none";
+    document.getElementById("sandbox-note").style.display="none";
+  }
+
+  showView("lecture");
+  updateNotifDot();
+}
+
+function backToChapters(){
+  // Clear iframe to stop video
+  document.getElementById("yt-frame").src="";
+  if(selSubject){ showView("student"); filterSubject(selSubject,null); }
+  else showView("student");
+}
+
+// ── Admin Login ───────────────────────────────────────────────────────────────
+function tryLogin(){
+  const u=document.getElementById("al-user").value.trim();
+  const p=document.getElementById("al-pwd").value;
+  const errEl=document.getElementById("al-err");
+  const card=document.getElementById("al-card");
+  if(u===ADMIN_USER && p===ADMIN_PASS){
+    errEl.style.display="none";
+    document.getElementById("al-user").value="";
+    document.getElementById("al-pwd").value="";
+    showView("admin");
+  } else {
+    errEl.textContent="Wrong username or password.";
+    errEl.style.display="block";
+    card.classList.add("shake");
+    setTimeout(()=>card.classList.remove("shake"),450);
+  }
+}
+function adminLogout(){ showView("admin-gate"); }
+
+// ── Admin Panel ───────────────────────────────────────────────────────────────
+function adminTab(name, el){
+  document.querySelectorAll(".aptab").forEach(t=>t.classList.remove("on"));
+  document.querySelectorAll(".admin-tab-content").forEach(t=>t.classList.remove("on"));
+  el.classList.add("on");
+  document.getElementById("atab-"+name).classList.add("on");
+  if(name==="manage") renderManageList();
+  if(name==="ann")   document.getElementById("ann-text").value=announce;
+}
+
+function renderAdminPanel(){
+  // Stats
+  const stats=document.getElementById("ap-stats");
+  stats.innerHTML="";
+  SUBJECTS.forEach(s=>{
+    const m=META[s];
+    const cnt=chapters.filter(c=>c.subject===s).length;
+    stats.innerHTML+=`<div class="stat" style="border-top:2px solid ${m.color}">
+      <div class="stat-ic">${m.icon}</div>
+      <div class="stat-n" style="color:${m.color}">${cnt}</div>
+      <div class="stat-l">${s}</div></div>`;
+  });
+  stats.innerHTML+=`<div class="stat" style="border-top:2px solid #f59e0b">
+    <div class="stat-ic">📚</div>
+    <div class="stat-n" style="color:#f59e0b">${chapters.length}</div>
+    <div class="stat-l">Total</div></div>`;
+  document.getElementById("manage-tab-btn").textContent=`📋 Manage (${chapters.length})`;
+  // Update ann text if on that tab
+  if(document.getElementById("atab-ann").classList.contains("on"))
+    document.getElementById("ann-text").value=announce;
+}
+
+// ── Add Chapter ───────────────────────────────────────────────────────────────
+function addChapter(){
+  const subj=document.getElementById("f-subj").value;
+  const chap=document.getElementById("f-chap").value.trim();
+  const url =document.getElementById("f-url").value.trim();
+  const desc=document.getElementById("f-desc").value.trim();
+  const errEl=document.getElementById("add-err");
+  const okEl =document.getElementById("add-ok");
+  if(!chap){errEl.textContent="Chapter name is required.";errEl.style.display="block";return;}
+  if(!url) {errEl.textContent="YouTube URL is required.";errEl.style.display="block";return;}
+  errEl.style.display="none";
+  const playlistId=extractPL(url);
+  chapters.unshift({id:uid(),subject:subj,chapter:chap,description:desc,playlistId,addedAt:Date.now()});
+  persist();
+  document.getElementById("f-chap").value="";
+  document.getElementById("f-url").value="";
+  document.getElementById("f-desc").value="";
+  okEl.textContent=`✅ "${chap}" published! Students can see it now.`;
+  okEl.style.display="block";
+  setTimeout(()=>okEl.style.display="none",3500);
+  renderAdminPanel();
+  showToast(`✅ "${chap}" added! Students can watch it now.`);
+  updateNotifDot();
+}
+
+// ── Manage / Edit / Delete ────────────────────────────────────────────────────
+function manageFilter(val, el){
+  manFilterVal=val;
+  document.querySelectorAll(".ftab").forEach(t=>t.classList.remove("on"));
+  el.classList.add("on");
+  renderManageList();
+}
+
+function renderManageList(){
+  const list = manFilterVal==="All" ? chapters : chapters.filter(c=>c.subject===manFilterVal);
+  const container=document.getElementById("ach-list");
+  container.innerHTML="";
+  if(list.length===0){container.innerHTML='<div class="empty">No chapters yet.</div>';return;}
+  list.forEach(ch=>{
+    const m=META[ch.subject];
+    if(editingId===ch.id){
+      const div=document.createElement("div");
+      div.className="edit-row";
+      div.innerHTML=`
+        <div class="fgrid">
+          <div class="fg"><label>Subject</label>
+            <select id="ef-subj">${SUBJECTS.map(s=>`<option${s===ch.subject?" selected":""}>${s}</option>`).join("")}</select></div>
+          <div class="fg"><label>Chapter Name</label><input id="ef-chap" value="${ch.chapter}"/></div>
+          <div class="fg full"><label>Playlist URL / ID</label><input id="ef-url" value="${ch.playlistId}"/></div>
+          <div class="fg full"><label>Description</label><textarea id="ef-desc">${ch.description||""}</textarea></div>
+        </div>
+        <div class="edit-acts">
+          <button class="btn-save" onclick="saveEdit('${ch.id}')">💾 Save Changes</button>
+          <button class="btn-cancel" onclick="cancelEdit()">Cancel</button>
+        </div>`;
+      container.appendChild(div);
+    } else {
+      const row=document.createElement("div");
+      row.className="ach-row";
+      row.innerHTML=`
+        <div class="ach-l">
+          <span style="font-size:1.3rem">${m.icon}</span>
+          <div style="min-width:0">
+            <div class="ach-subj" style="color:${m.color}">${ch.subject}</div>
+            <div class="ach-title">${ch.chapter}${isNew(ch.addedAt)?'<span class="inline-new" style="font-size:.58rem">NEW</span>':""}</div>
+            <div class="ach-pid">ID: <code>${ch.playlistId}</code></div>
+          </div>
+        </div>
+        <div class="ach-acts">
+          <button class="btn-edit" onclick="startEdit('${ch.id}')">✏️ Edit</button>
+          <button class="btn-del" onclick="deleteChapter('${ch.id}','${ch.chapter.replace(/'/g,"\\'")}')">🗑️</button>
+        </div>`;
+      container.appendChild(row);
+    }
+  });
+}
+
+function startEdit(id){ editingId=id; renderManageList(); }
+function cancelEdit(){ editingId=null; renderManageList(); }
+function saveEdit(id){
+  const subj=document.getElementById("ef-subj").value;
+  const chap=document.getElementById("ef-chap").value.trim();
+  const url =document.getElementById("ef-url").value.trim();
+  const desc=document.getElementById("ef-desc").value.trim();
+  const idx=chapters.findIndex(c=>c.id===id);
+  if(idx>=0){ chapters[idx]={...chapters[idx],subject:subj,chapter:chap,playlistId:extractPL(url),description:desc}; }
+  persist(); editingId=null; renderManageList(); renderAdminPanel();
+  showToast(`✏️ Chapter updated!`);
+}
+function deleteChapter(id,name){
+  if(!confirm(`Delete "${name}"?`)) return;
+  chapters=chapters.filter(c=>c.id!==id);
+  persist(); renderManageList(); renderAdminPanel();
+  showToast("🗑️ Chapter deleted.");
+  updateNotifDot();
+}
+
+// ── Announcement ──────────────────────────────────────────────────────────────
+function saveAnn(){
+  announce=document.getElementById("ann-text").value.trim();
+  persistAnn(); renderTicker();
+  document.getElementById("ann-preview").textContent=announce;
+  showToast("📢 Announcement published! All students will see it.");
+}
+function clearAnn(){
+  announce=""; document.getElementById("ann-text").value="";
+  document.getElementById("ann-preview").textContent="";
+  persistAnn(); renderTicker();
+  showToast("Announcement cleared.");
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderTicker();
+renderStudentHome();
+</script>
+</body>
+</html>
